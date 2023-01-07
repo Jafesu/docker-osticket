@@ -1,8 +1,8 @@
-FROM docker.io/tiredofit/nginx-php-fpm:debian-7.4-bullseye
+FROM docker.io/tiredofit/nginx-php-fpm:debian-8.1-bullseye
 LABEL maintainer="Dave Conroy (github.com/tiredofit)"
 
 ### Default Runtime Environment Variables
-ENV OSTICKET_VERSION=v1.15.4 \
+ENV OSTICKET_VERSION=develop \
     DB_PREFIX=ost_ \
     DB_PORT=3306 \
     CRON_INTERVAL=10 \
@@ -49,7 +49,7 @@ RUN set -x && \
     \
 # Setup Official Plugins
     git clone -b develop https://github.com/osTicket/osTicket-plugins /usr/src/plugins
-RUN set -x && \    cd /usr/src/plugins && \
+RUN cd /usr/src/plugins && \
     php make.php hydrate && \
     for plugin in $(find * -maxdepth 0 -type d ! -path doc ! -path lib); do cp -r ${plugin} /assets/install/include/plugins; done; \
     cp -R /usr/src/plugins/*.phar /assets/install/include/plugins/ && \
@@ -80,7 +80,7 @@ RUN set -x && \    cd /usr/src/plugins && \
     git clone https://github.com/clonemeagain/osticket-slack /assets/install/include/plugins/slack && \
     ## Teams (Microsoft)
     git clone https://github.com/ipavlovi/osTicket-Microsoft-Teams-plugin /assets/install/include/plugins/teams && \
-    \
+
 ### Log Miscellany Installation
     touch /var/log/msmtp.log && \
     chown nginx:www-data /var/log/msmtp.log && \
